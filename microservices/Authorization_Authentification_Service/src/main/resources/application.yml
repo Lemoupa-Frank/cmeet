@@ -1,0 +1,20 @@
+server:
+  address: localhost
+  port : 8081
+spring:
+  application:
+    name: store-meet-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cmeet
+    username: frank
+    password: frank2a4s56
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
