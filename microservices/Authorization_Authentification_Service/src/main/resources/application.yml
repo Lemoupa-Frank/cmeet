@@ -1,9 +1,9 @@
 server:
   address: localhost
-  port : 8081
+  port : 8083
 spring:
   application:
-    name: store-meet-service
+    name: Authorization_Authentication
   datasource:
     url: jdbc:postgresql://localhost:5432/cmeet
     username: frank
