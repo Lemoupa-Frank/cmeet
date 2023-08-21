@@ -10,6 +10,10 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/store_meet
+        - id: Authorization_Authentication
+          uri: http://localhost:8083
+          predicates:
+            - Path=/user/**
 eureka:
   client:
     service-url:
