@@ -1,6 +1,5 @@
 package camtrack.meet.repository;
 
-import camtrack.meet.repository.User_repository;
 import camtrack.meet.user.Model_User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +24,7 @@ public class user_service {
         {
             return user_repository.findById(userid).isPresent()?user_repository.findById(userid).get():null;
         }
-
-    public Model_User Save(Model_User s){
+        public Model_User Save(Model_User s){
         return user_repository.save(s);
     }
 }

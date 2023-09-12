@@ -9,10 +9,13 @@ spring:
     username: frank
     password: frank2a4s56
     driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      enabled: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
 eureka:
   client:

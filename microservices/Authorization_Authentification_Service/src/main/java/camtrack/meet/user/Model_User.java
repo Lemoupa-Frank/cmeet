@@ -20,7 +20,7 @@ public class Model_User {
      * his session
      *
      * @param userId      - user e-mail
-     * @param number - user display name
+     * @param display_name - user display name
      * @param number      - user phone number
      * @param department  - user department
      * @param password    - Password of the user
