@@ -14,6 +14,9 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/user/**
+  web:
+    socket:
+      enabled: true
 eureka:
   client:
     service-url:

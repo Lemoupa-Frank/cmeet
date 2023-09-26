@@ -1,0 +1,79 @@
+package camtrack.meet.cmeet;
+
+import org.java_websocket.WebSocket;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import javax.annotation.PostConstruct;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.util.Objects;
+import java.util.Scanner;
+
+import static java.lang.Thread.sleep;
+
+@Configuration
+
+public class WebSocketServerConfig {
+
+    static MyWebSocketServer server;
+    @PostConstruct
+    public void init() {
+        int port = 8085;
+        server = new MyWebSocketServer(port);
+        server.start();
+        System.out.println("WebSocket server started on port " + port);
+    }
+
+    private static class MyWebSocketServer extends WebSocketServer {
+
+        public MyWebSocketServer(int port) {
+            super(new InetSocketAddress(port));
+        }
+
+        @Override
+        public void onOpen(WebSocket conn, ClientHandshake handshake) {
+            // Handle WebSocket connection open event
+            System.out.println("New connection opened");
+        }
+
+        @Override
+        public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+            // Handle WebSocket connection close event
+            System.out.println("Connection closed: " + reason);
+        }
+
+        @Override
+        public void onError(WebSocket conn, Exception ex) {
+            // Handle WebSocket error event
+            System.out.println("WebSocket error: " + ex.getMessage());
+        }
+
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onMessage(WebSocket conn, String message)
+        {
+            // Handle received WebSocket message
+            //Boolean a = true;
+            System.out.println("Received message: " + message);
+            //System.out.print("Server message: ");
+            //Scanner scanner = new Scanner(System.in);
+            //String Smessage = scanner.nextLine();
+            server.broadcast(message);
+            //Queue messages when a there is a new connection broadcast previous messages
+        }
+
+        @Override
+        public void onMessage(WebSocket conn, ByteBuffer message) {
+            super.onMessage(conn, message);
+            System.out.println("Received Byte Message: " + message);
+            server.broadcast(message);
+        }
+    }
+}

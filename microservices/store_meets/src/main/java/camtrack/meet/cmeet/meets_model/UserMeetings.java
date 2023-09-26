@@ -20,13 +20,19 @@ public class UserMeetings implements Serializable {
     @EmbeddedId
     protected UserMeetingsPK userMeetingsPK;
     @Column(name = "signature")
-    private String signature;
+    private byte[] signature;
     @Column(name = "role")
     private String role;
     @Column(name = "signable")
     private Boolean signable;
 
     public UserMeetings() {
+    }
+
+    public UserMeetings(String role, UserMeetingsPK userMeetingsPK,Boolean signable) {
+        this.userMeetingsPK = userMeetingsPK;
+        this.role = role;
+        this.signable = signable;
     }
 
     public UserMeetings(UserMeetingsPK userMeetingsPK) {
@@ -45,11 +51,11 @@ public class UserMeetings implements Serializable {
         this.userMeetingsPK = userMeetingsPK;
     }
 
-    public String getSignature() {
+    public byte[] getSignature() {
         return signature;
     }
 
-    public void setSignature(String signature) {
+    public void setSignature(byte[] signature) {
         this.signature = signature;
     }
 

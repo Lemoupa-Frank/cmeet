@@ -24,7 +24,12 @@ public class meets_service {
         return meetsRepository.save(s);
     }
 
-    public Iterable<camtrackmeets> MyMeets(String s) {
-        return meetsRepository.findUserMeets(s);
+    public void update_user_meeting(camtrackmeets s){ meetsRepository.upadteMeetin(s.getNumberOfParticipants(),s.getLocation(),s.getStartdate(),s.getDateofcreation(),s.getEnddate(),s.getOwner(),s.getDescription(),s.getTitle(),s.getAttendee(),s.getMeetingId());}
+
+    public Iterable<camtrackmeets> MyMeets(String s) {return meetsRepository.findUserMeets(s);}
+
+    public boolean check_if_meeting_exixt(String s){return meetsRepository.existsById(s);
     }
+
+
 }

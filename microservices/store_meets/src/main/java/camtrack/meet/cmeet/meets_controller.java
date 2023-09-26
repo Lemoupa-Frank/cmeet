@@ -8,6 +8,7 @@ import camtrack.meet.cmeet.repository.usermeets_service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +42,32 @@ public class meets_controller {
         String us =  "frankmichel022@gmail.com";
         return meetsService.MyMeets(us);
     }
-    @GetMapping("/FindUserByMeetings")
-    public Iterable<UserMeetings> Attendee_Details(@RequestParam("meetingsId") String meetingsId)
+
+    @PostMapping("/update_meetings")
+    public void update_attendee(@RequestBody camtrackmeets cm)
     {
-        return usermeetsService.FindUserByMeets(meetingsId);
+        meetsService.update_user_meeting(cm);
+    }
+
+    @PostMapping("/user_meetings")
+    public void update_attendee(@RequestBody UserMeetings um)
+    {
+        UserMeetings attendee = new UserMeetings();
+        attendee  = um;
+        System.out.println(Arrays.toString(attendee.getSignature()));
+        usermeetsService.update(attendee);
+    }
+
+    /**
+     * GETS all the participants for a particular meeting
+     * with their roles only
+     * @param meetingsId unique identifier for a meeting
+     * @return
+     */
+    @GetMapping("/finduserbyMeets")
+    public List<UserMeetings> Attendee_Details(@RequestParam("meetingsId") String meetingsId)
+    {
+        return usermeetsService.finduserbyMeets(meetingsId);
     }
     @GetMapping("/MeetsCheck")
     public Iterable<UserMeetings> viewEventChecks()
@@ -61,7 +84,6 @@ public class meets_controller {
     @PostMapping
     public camtrackmeets addmeet(@RequestBody List<camtrackmeets> myevent)
     {
-        //List<Event> events = myevent.getEvents();
         camtrackmeets cm = null;
         UserMeetings UM;
         UserMeetingsPK UPK;
@@ -86,17 +108,26 @@ public class meets_controller {
             UM.setRole(ev.getOwner().equals(ev.getUserid())?"owner":"Attendee");
             UM.setUserMeetingsPK(UPK);
             UM.setSignable(false);
-            UM.setSignature(" ");
+            UM.setSignature(null);
 
-            this.meetsService.Save(cm);
+
+            try{
+                if(!meetsService.check_if_meeting_exixt(cm.getMeetingId()))
+                {this.meetsService.Save(cm);}
+            }
+            catch (Exception e) {
+                System.out.println("Unable to Insert in user_meetings surely due to a foreign Key constraint" + e);
+            }
             try {
-                this.usermeetsService.Save(UM);
+                if(!usermeetsService.ifUserMeets(UM))
+                {this.usermeetsService.Save(UM);}
             }
             catch (Exception e)
             {
                 System.out.println("Unable to Insert in user_meetings surely due to a foreign Key constraint" + e);
             }
         }
+        // rather return a query of the events from now till end of the day, adding time zone might proove useful
         return cm;
     }
 
