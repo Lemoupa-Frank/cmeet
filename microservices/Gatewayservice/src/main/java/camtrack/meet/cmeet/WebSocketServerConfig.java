@@ -3,22 +3,21 @@ package camtrack.meet.cmeet;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
-import static java.lang.Thread.sleep;
 
 @Configuration
 
 public class WebSocketServerConfig {
 
     static MyWebSocketServer server;
+    List<String[]> messagee_array = new ArrayList<>();
+    List<byte[]> byte_message_array = new ArrayList<>();
     @PostConstruct
     public void init() {
         int port = 8085;
@@ -35,7 +34,6 @@ public class WebSocketServerConfig {
 
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
-            // Handle WebSocket connection open event
             System.out.println("New connection opened");
         }
 
@@ -59,19 +57,15 @@ public class WebSocketServerConfig {
         @Override
         public void onMessage(WebSocket conn, String message)
         {
-            // Handle received WebSocket message
-            //Boolean a = true;
+
             System.out.println("Received message: " + message);
-            //System.out.print("Server message: ");
-            //Scanner scanner = new Scanner(System.in);
-            //String Smessage = scanner.nextLine();
             server.broadcast(message);
-            //Queue messages when a there is a new connection broadcast previous messages
         }
 
         @Override
         public void onMessage(WebSocket conn, ByteBuffer message) {
             super.onMessage(conn, message);
+
             System.out.println("Received Byte Message: " + message);
             server.broadcast(message);
         }

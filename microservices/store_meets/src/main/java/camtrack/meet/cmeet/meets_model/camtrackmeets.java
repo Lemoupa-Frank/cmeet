@@ -1,11 +1,10 @@
 package camtrack.meet.cmeet.meets_model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import com.google.api.services.calendar.model.Event;
-
-import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,12 +19,17 @@ public class camtrackmeets implements Serializable {
     private String location;
     @Column(name = "number_of_participants")
     private Integer numberOfParticipants;
-    @Column(name = "dateofcreation")
-    private String dateofcreation;
-    @Column(name = "startdate")
-    private String startdate;
-    @Column(name = "enddate")
-    private String enddate;
+
+
+    @jakarta.persistence.Column(name = "dateofcreation")
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime dateofcreation;
+    @jakarta.persistence.Column(name = "startdate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime startdate;
+    @jakarta.persistence.Column(name = "enddate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime enddate;
     @Column(name = "owner")
     private String owner;
 
@@ -72,27 +76,27 @@ public class camtrackmeets implements Serializable {
         this.numberOfParticipants = numberOfParticipants;
     }
 
-    public String getDateofcreation() {
+    public OffsetDateTime getDateofcreation() {
         return dateofcreation;
     }
 
-    public void setDateofcreation(String dateofcreation) {
+    public void setDateofcreation(OffsetDateTime dateofcreation) {
         this.dateofcreation = dateofcreation;
     }
 
-    public String getStartdate() {
+    public OffsetDateTime getStartdate() {
         return startdate;
     }
 
-    public void setStartdate(String startdate) {
+    public void setStartdate(OffsetDateTime startdate) {
         this.startdate = startdate;
     }
 
-    public String getEnddate() {
+    public OffsetDateTime getEnddate() {
         return enddate;
     }
 
-    public void setEnddate(String enddate) {
+    public void setEnddate(OffsetDateTime enddate) {
         this.enddate = enddate;
     }
 

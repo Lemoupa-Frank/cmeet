@@ -19,7 +19,7 @@ public interface usermeets_repsitory extends CrudRepository<UserMeetings, UserMe
     @Transactional
     @Modifying
     @Query("update UserMeetings u set u.signature = :signature WHERE u.userMeetingsPK = :userMeetingsPK")
-    int updateSignatureAndRoleBy(byte[] signature, UserMeetingsPK userMeetingsPK);
+    int updateSignatureAndRoleBy(String signature, UserMeetingsPK userMeetingsPK);
     @Query("SELECT um from UserMeetings um WHERE um.userMeetingsPK.meetingId = :meetingId")
     List<UserMeetings> findUserByMeeting(String meetingId);
 }

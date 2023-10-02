@@ -11,7 +11,7 @@ public class Model_User {
     @Id
     private  String userId;
     private  String display_name;
-    private String number;
+    private  String number;
     private  String department;
     private  String password;
 

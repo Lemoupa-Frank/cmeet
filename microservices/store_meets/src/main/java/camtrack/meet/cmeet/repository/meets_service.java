@@ -6,6 +6,8 @@ import camtrack.meet.cmeet.meets_model.camtrackmeets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +32,9 @@ public class meets_service {
 
     public boolean check_if_meeting_exixt(String s){return meetsRepository.existsById(s);
     }
+
+    public List<camtrackmeets> todays_meets(String userId){return meetsRepository.todays_meets_for_user(userId);}
+
 
 
 }

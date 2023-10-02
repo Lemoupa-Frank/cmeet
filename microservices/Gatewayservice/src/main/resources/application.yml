@@ -21,3 +21,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+signature:
+  file:
+    path: /path/to/signature/files/
