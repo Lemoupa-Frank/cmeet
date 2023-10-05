@@ -101,13 +101,15 @@ public class WebSocketServerConfig {
                 Event_Controller.put(json.get("MeetingId").getAsString(), message);
             }
             else {Event_Controller.put(json.get("MeetingId").getAsString(), message);}
-            meetid.add(json.get("MeetingId").getAsString());
+            if(!meetid.contains(json.get("MeetingId").getAsString()))
+            {meetid.add(json.get("MeetingId").getAsString());}
             Event_Message_groups.put(json.get("MeetingId").getAsString(), new ArrayList<>());
             if (meetid.size()==10)
             {
                 Event_Message_groups.remove(meetid.get(0));
                 Event_Controller.remove(meetid.get(0));
                 meetid.remove(0);
+                System.out.println("size of meetid:"+meetid.size()+" size of Event_Controller:"+Event_Controller.size()+ " Size of Event_Message_groups:"+Event_Message_groups.size() );
             }
             server.broadcast(message);
         }
