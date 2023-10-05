@@ -5,22 +5,20 @@ import camtrack.meet.cmeet.meets_model.UserMeetingsPK;
 import camtrack.meet.cmeet.meets_model.camtrackmeets;
 import camtrack.meet.cmeet.repository.meets_service;
 import camtrack.meet.cmeet.repository.usermeets_service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -40,12 +38,14 @@ public class meets_controller {
 
 
 
+    @Operation(summary = "Obtenir toutes les réunions")
     @GetMapping("/All")
     public Iterable<camtrackmeets> allEvents()
     {
         return meetsService.getAllUsers();
     }
 
+    @Operation(summary = "Obtenir toutes les réunions d'un utilisateur")
     @GetMapping("/findMeetingbyUser")
     public Iterable<camtrackmeets> Myevents()
     {
@@ -53,12 +53,16 @@ public class meets_controller {
         return meetsService.MyMeets(us);
     }
 
+
+    @Operation(summary = "Mettre à jour une réunion d'un utilisateur")
     @PostMapping("/update_meetings")
     public void update_meetings(@RequestBody camtrackmeets cm)
     {
         meetsService.update_user_meeting(cm);
     }
 
+
+    @Operation(summary = "Mettre à jour les détails de la réunion d'un utilisateur")
     @PostMapping("/update_user_meetings")
     public void update_attendee(@RequestBody UserMeetings um)
     {
@@ -92,11 +96,15 @@ public class meets_controller {
      * @param meetingsId unique identifier for a meeting
      * @return Returns all attendees of the meet
      */
+
+    @Operation(summary = "Obtenir les détails de tous les participants à une réunion")
     @GetMapping("/finduserbyMeets")
-    public List<UserMeetings> Attendee_Details(@RequestParam("meetingsId") String meetingsId)
+    public List<UserMeetings> Attendee_Details(@Parameter(description = "identifiant de la réunion") @RequestParam("meetingsId") String meetingsId)
     {
         return usermeetsService.finduserbyMeets(meetingsId);
     }
+
+    @Operation(summary = "Obtenir les détails de tous les participants pour toutes les réunions")
     @GetMapping("/MeetsCheck")
     public Iterable<UserMeetings> viewEventChecks()
     {
@@ -109,6 +117,8 @@ public class meets_controller {
      * @param myevent The camtrack event gotten from the Calendar Events
      * @return still to be determined
      */
+
+    @Operation(summary = "Ajouter une nouvelle réunion")
     @PostMapping
     public List<camtrackmeets> addmeet(@RequestBody List<camtrackmeets> myevent)
     {
