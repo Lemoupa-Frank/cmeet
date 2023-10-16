@@ -1,14 +1,11 @@
 package camtrack.meet.cmeet.repository;
 
-import camtrack.meet.cmeet.meets_model.UserMeetings;
-import camtrack.meet.cmeet.meets_model.UserMeetingsPK;
 import camtrack.meet.cmeet.meets_model.camtrackmeets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class meets_service {
@@ -35,6 +32,8 @@ public class meets_service {
 
     public List<camtrackmeets> todays_meets(String userId){return meetsRepository.todays_meets_for_user(userId);}
 
+    public List<camtrackmeets> Departmentmeets(String department, LocalDate startDate, LocalDate endDate){return meetsRepository.DepartmentMeetings(department,startDate,endDate);}
 
+    public int DepartmentmeetsCount(String department, LocalDate startDate, LocalDate endDate){return meetsRepository.DepartmentMeetingsCount(department,startDate,endDate);}
 
 }

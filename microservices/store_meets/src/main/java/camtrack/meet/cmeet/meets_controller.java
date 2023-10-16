@@ -52,7 +52,19 @@ public class meets_controller {
         String us =  "frankmichel022@gmail.com";
         return meetsService.MyMeets(us);
     }
+    @Operation(summary = "Tous les reunions pour un department pour une periode specific")
+    @GetMapping("/DepartmentMeetings")
+    public List<camtrackmeets> getDmeetings(@Parameter(description = "Nom du Departement") @RequestParam("DepartmentName") String Departement_name,@Parameter(description = "Date de debut") @RequestParam("Startdate") LocalDate start_date,@Parameter(description = "Date de fin") @RequestParam("enddate") LocalDate end_date)
+    {
+        return meetsService.Departmentmeets(Departement_name,start_date,end_date);
+    }
 
+    @Operation(summary = "Le nombre de reunion eu par çe departement")
+    @GetMapping("countOFMeetingsDepart")
+    public int getNumberofMeetings(@Parameter(description = "Nom du Departement") @RequestParam("DepartmentName") String Departement_name,@Parameter(description = "Date de debut") @RequestParam("Startdate") LocalDate start_date,@Parameter(description = "Date de fin") @RequestParam("enddate") LocalDate end_date)
+    {
+        return meetsService.DepartmentmeetsCount(Departement_name,start_date,end_date);
+    }
 
     @Operation(summary = "Mettre à jour une réunion d'un utilisateur")
     @PostMapping("/update_meetings")

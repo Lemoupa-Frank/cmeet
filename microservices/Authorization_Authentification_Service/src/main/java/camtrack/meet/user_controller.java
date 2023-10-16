@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 
@@ -48,4 +50,11 @@ public class user_controller {
     {
         return userService.getUser(userId);
     }
+    @Operation(summary = "Les utilisateur qui etait absent pour la reunion")
+    @GetMapping("Absentee")
+    public List<Model_User> getAbsentees(@Parameter(description = "MeetingID") @RequestParam("MeetingId") String MeetingId)
+    {
+        return userService.getAbsentee(MeetingId);
+    }
+
 }

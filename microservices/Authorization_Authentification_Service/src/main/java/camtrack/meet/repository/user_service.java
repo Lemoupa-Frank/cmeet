@@ -4,6 +4,8 @@ import camtrack.meet.user.Model_User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class user_service {
@@ -26,5 +28,10 @@ public class user_service {
         }
         public Model_User Save(Model_User s){
         return user_repository.save(s);
+    }
+
+    public List<Model_User> getAbsentee(String  MeetingId)
+    {
+       return user_repository.findUsersWithNullSignatureByMeetingId(MeetingId);
     }
 }
