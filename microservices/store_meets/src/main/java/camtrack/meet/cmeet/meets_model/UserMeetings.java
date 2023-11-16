@@ -1,5 +1,6 @@
 package camtrack.meet.cmeet.meets_model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.api.services.calendar.model.Event;
 import jakarta.persistence.*;
 
@@ -25,6 +26,9 @@ public class UserMeetings implements Serializable {
     private String role;
     @Column(name = "signable")
     private Boolean signable;
+    @Transient
+    private byte[] signature_data;
+    
 
     public byte[] getSignature_data() {
         return signature_data;
@@ -34,8 +38,6 @@ public class UserMeetings implements Serializable {
         this.signature_data = signature_data;
     }
 
-    @Transient
-    private byte[] signature_data;
 
     public UserMeetings() {
     }

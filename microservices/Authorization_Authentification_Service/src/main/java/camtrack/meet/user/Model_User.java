@@ -1,9 +1,9 @@
 package camtrack.meet.user;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name = "User", schema = "public")
@@ -14,6 +14,8 @@ public class Model_User {
     private  String number;
     private  String department;
     private  String password;
+    @Column(name = "role")
+    private String role;
 
     /**
      * A constructor to fully initialize user for
@@ -66,5 +68,13 @@ public class Model_User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

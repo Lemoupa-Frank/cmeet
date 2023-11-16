@@ -30,8 +30,13 @@ public class user_service {
         return user_repository.save(s);
     }
 
-    public List<Model_User> getAbsentee(String  MeetingId)
-    {
-       return user_repository.findUsersWithNullSignatureByMeetingId(MeetingId);
-    }
+        public List<Model_User> getAbsentee(String  MeetingId)
+        {
+            return user_repository.findUsersWithNullSignatureByMeetingId(MeetingId);
+        }
+
+        public void update_role(String userid, String role)
+        {
+            user_repository.updateRoleByUserId(role,userid);
+        }
 }

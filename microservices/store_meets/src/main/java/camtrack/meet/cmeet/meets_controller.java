@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -45,12 +46,11 @@ public class meets_controller {
         return meetsService.getAllUsers();
     }
 
-    @Operation(summary = "Obtenir toutes les réunions d'un utilisateur")
+    @Operation(summary = "Obtenir toutes les réunions d'un utilisateur pour une periode")
     @GetMapping("/findMeetingbyUser")
-    public Iterable<camtrackmeets> Myevents()
+    public Iterable<camtrackmeets> Myevents(@Parameter(description = "identifiant de l'utilisateur") @RequestParam("userId") String userId,@Parameter(description = "Date de debut") @RequestParam("Startdate") OffsetDateTime start_date,@Parameter(description = "Date de fin") @RequestParam("enddate") OffsetDateTime end_date)
     {
-        String us =  "frankmichel022@gmail.com";
-        return meetsService.MyMeets(us);
+        return meetsService.MyMeets(userId,start_date,end_date);
     }
     @Operation(summary = "Tous les reunions pour un department pour une periode specific")
     @GetMapping("/DepartmentMeetings")
@@ -59,7 +59,7 @@ public class meets_controller {
         return meetsService.Departmentmeets(Departement_name,start_date,end_date);
     }
 
-    @Operation(summary = "Le nombre de reunion eu par çe departement")
+    @Operation(summary = "Le nombre de reunion eu par çe departement pour une periode")
     @GetMapping("countOFMeetingsDepart")
     public int getNumberofMeetings(@Parameter(description = "Nom du Departement") @RequestParam("DepartmentName") String Departement_name,@Parameter(description = "Date de debut") @RequestParam("Startdate") LocalDate start_date,@Parameter(description = "Date de fin") @RequestParam("enddate") LocalDate end_date)
     {
@@ -76,20 +76,20 @@ public class meets_controller {
 
     @Operation(summary = "Mettre à jour les détails de la réunion d'un utilisateur")
     @PostMapping("/update_user_meetings")
-    public void update_attendee(@RequestBody UserMeetings um)
+    public void update_attendee(@Parameter(description = "les details de la reunion") @RequestBody UserMeetings um)
     {
         
         String SignatureFolder = "cmeetSignatures";
         UserMeetings attendee;
         attendee  = um;
-        System.out.println(Arrays.toString(attendee.getSignature_data()));
         String filePath =   File.pathSeparator
                 + SignatureFolder 
                 + File.separator 
                 + um.getUserMeetingsPK().getUserId()
                 + ".jpg";
-        attendee.setSignature(filePath);
-        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+        String absolutePath = new File(filePath).getAbsolutePath();
+        attendee.setSignature(absolutePath);
+        try (FileOutputStream fos = new FileOutputStream(absolutePath)) {
             fos.write(attendee.getSignature_data());
             System.out.println("Signature written successfully.");
             fos.close();
@@ -110,10 +110,21 @@ public class meets_controller {
      */
 
     @Operation(summary = "Obtenir les détails de tous les participants à une réunion")
-    @GetMapping("/finduserbyMeets")
+    @GetMapping("/meeting_attendance")
     public List<UserMeetings> Attendee_Details(@Parameter(description = "identifiant de la réunion") @RequestParam("meetingsId") String meetingsId)
     {
-        return usermeetsService.finduserbyMeets(meetingsId);
+        List<UserMeetings> LUM = usermeetsService.findusersbyMeets(meetingsId);
+       for (UserMeetings userMeetings : LUM) {
+            try (FileInputStream fis = new FileInputStream(userMeetings.getSignature())) {
+                userMeetings.setSignature_data(fis.readAllBytes());
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Arrays.toString(userMeetings.getSignature_data()));
+            System.out.println("Signature written successfully.");
+        }
+        return LUM;
     }
 
     @Operation(summary = "Obtenir les détails de tous les participants pour toutes les réunions")
@@ -122,6 +133,18 @@ public class meets_controller {
     {
         return usermeetsService.getAllUsers();
     }
+
+    @Operation(summary = "Obtenir une Reunion")
+    @GetMapping("/Get_a_meeting")
+    public camtrackmeets get_a_meet(@Parameter(description = "identifiant de la réunion") @RequestParam("meetingsId") String meetingsId)
+    {
+        if(meetsService.getmeeting(meetingsId).isPresent())
+        {
+            return meetsService.getmeeting(meetingsId).get();
+        }
+        return null;
+    }
+
     /**
      * This functions inserts into the meeting and usermeetings tables preferably every day
      * all the meeting process per request contain the meetings the user making the request is
@@ -159,7 +182,8 @@ public class meets_controller {
             cm.setDescription(ev.getDescription());
             cm.setAttendee(ev.getAttendee());
             cm.setTitle(ev.getTitle());
-
+            cm.setUpdateComment("Created by " + cm.getOwner());
+            cm.setMeetingupdateTime(ev.getMeetingupdateTime());
 
             UM.setRole(ev.getOwner().equals(ev.getUserid())?"owner":"Attendee");
             UM.setUserMeetingsPK(UPK);

@@ -1,6 +1,7 @@
 package camtrack.meet;
 
 import camtrack.meet.repository.user_service;
+import camtrack.meet.role_record.roles_record;
 import camtrack.meet.user.Model_User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import java.util.List;
 public class user_controller {
 
     private final user_service userService;
-
+    roles_record record  = new roles_record();
     @Autowired
     public user_controller(user_service userService) {
         this.userService = userService;
@@ -45,16 +46,31 @@ public class user_controller {
     }
 
     @Operation(summary = "obtenir l'utilisateur à partir de son identifiant")
-    @PostMapping("getUser")
+    @PostMapping("/getUser")
     public Model_User getUserFromID(@Parameter(description = "identifiant de l'utilisateur") @RequestParam("userId") String userId)
     {
         return userService.getUser(userId);
     }
     @Operation(summary = "Les utilisateur qui etait absent pour la reunion")
-    @GetMapping("Absentee")
+    @GetMapping("/Absentee")
     public List<Model_User> getAbsentees(@Parameter(description = "MeetingID") @RequestParam("MeetingId") String MeetingId)
     {
         return userService.getAbsentee(MeetingId);
     }
 
+    @Operation(summary = "Definir Role")
+    @GetMapping("/updateRole")
+    public String Define_Role(@Parameter(description = "identifiant de l'utilisateur") @RequestParam("userId") String userId, @Parameter(description = "Donneé pour le role") @RequestParam("Role_Data") String role,@Parameter(description = "Mot de passe du role") @RequestParam("role_identifier") String role_identifier)
+    {
+        if(record.get_data(role).equals(role_identifier))
+        {
+            userService.update_role(userId,role);
+            return "Success";
+
+        }
+        else
+        {
+            return "Failure";
+        }
+    }
 }

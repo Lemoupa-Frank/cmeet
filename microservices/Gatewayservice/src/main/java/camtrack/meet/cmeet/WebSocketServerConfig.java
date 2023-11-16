@@ -21,10 +21,16 @@ import java.util.logging.Logger;
 public class WebSocketServerConfig {
 
     MyWebSocketServer server;
-    HashMap<String, ArrayList<ByteBuffer>> Event_Message_groups = new HashMap<>();
-    HashMap<String, String> Event_Controller = new HashMap<>();
 
-    ArrayList<String> meetid = new ArrayList<>();
+    // map to store the byte messages for each meeting
+    HashMap<String, ArrayList<ByteBuffer>> ByteMessages_per_MeetingID = new HashMap<>();
+
+    //map to store the string messages of each meeting stored in gateway
+    HashMap<String, String> StringMessage_per_MeetingID = new HashMap<>(); //store client string messages
+
+
+    //array that keeps track of number meetings and their MID stored in the gateway as the came in
+    ArrayList<String> List_of_MeetingID = new ArrayList<>();
 
     /*LinkedHashMap<String, ArrayList<ByteBuffer>> Event_Message_groups = new LinkedHashMap<>(2, 0.75f, true) {
         @Override
@@ -53,20 +59,22 @@ public class WebSocketServerConfig {
             super(new InetSocketAddress(port));
         }
 
+
+        // Send attendance on open if the signature had already begun
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
             System.out.println("New connection opened");
             System.out.println(handshake.getFieldValue("X-UID"));
-            if (Event_Message_groups.containsKey(handshake.getFieldValue("X-UID"))) {
-                if (!Event_Controller.isEmpty()) {
+            if (ByteMessages_per_MeetingID.containsKey(handshake.getFieldValue("X-UID"))) {
+                if (!StringMessage_per_MeetingID.isEmpty()) {
                     Thread thread = new Thread(() -> {
-                        conn.send(Event_Controller.get(handshake.getFieldValue("X-UID")));
+                        conn.send(StringMessage_per_MeetingID.get(handshake.getFieldValue("X-UID")));
                         try {
                             Thread.sleep(300);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(WebSocketServerConfig.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        for (ByteBuffer bf : Event_Message_groups.get(handshake.getFieldValue("X-UID"))) {
+                        for (ByteBuffer bf : ByteMessages_per_MeetingID.get(handshake.getFieldValue("X-UID"))) {
                             conn.send(bf);
                         }
                     });
@@ -96,20 +104,32 @@ public class WebSocketServerConfig {
         public void onMessage(WebSocket conn, String message) {
             System.out.println("Received message: " + message);
             JsonObject json = JsonParser.parseString(Objects.requireNonNull(message)).getAsJsonObject();
-            if (Event_Controller.containsKey(json.get("MeetingId").getAsString())) {
-                Event_Controller.remove(json.get("MeetingId").getAsString());
-                Event_Controller.put(json.get("MeetingId").getAsString(), message);
+
+            if (StringMessage_per_MeetingID.containsKey(json.get("MeetingId").getAsString())) {
+                // this condition closes and ongoing meeting in the StringMessage_per_MeetingID group
+                // since only admin sends string messages
+                StringMessage_per_MeetingID.remove(json.get("MeetingId").getAsString());
+                StringMessage_per_MeetingID.put(json.get("MeetingId").getAsString(), message);
             }
-            else {Event_Controller.put(json.get("MeetingId").getAsString(), message);}
-            if(!meetid.contains(json.get("MeetingId").getAsString()))
-            {meetid.add(json.get("MeetingId").getAsString());}
-            Event_Message_groups.put(json.get("MeetingId").getAsString(), new ArrayList<>());
-            if (meetid.size()==10)
+            else {
+                //This condition adds a meeting in StringMessage_per_MeetingID
+                //which be start signing signal for participants
+                StringMessage_per_MeetingID.put(json.get("MeetingId").getAsString(), message);
+            }
+            if(!List_of_MeetingID.contains(json.get("MeetingId").getAsString()))
+                 {
+                     // if the meeting was not in the list of
+                     // meeetings add it and instatiate ByteMessages_per_MeetingID
+                     // where messages will be stored
+                     List_of_MeetingID.add(json.get("MeetingId").getAsString());
+                     ByteMessages_per_MeetingID.put(json.get("MeetingId").getAsString(), new ArrayList<>());
+                 }
+            if (List_of_MeetingID.size()==10)
             {
-                Event_Message_groups.remove(meetid.get(0));
-                Event_Controller.remove(meetid.get(0));
-                meetid.remove(0);
-                System.out.println("size of meetid:"+meetid.size()+" size of Event_Controller:"+Event_Controller.size()+ " Size of Event_Message_groups:"+Event_Message_groups.size() );
+                ByteMessages_per_MeetingID.remove(List_of_MeetingID.get(0));
+                StringMessage_per_MeetingID.remove(List_of_MeetingID.get(0));
+                List_of_MeetingID.remove(0);
+                System.out.println("size of meetid:"+ List_of_MeetingID.size()+" size of Event_Controller:"+ StringMessage_per_MeetingID.size()+ " Size of Event_Message_groups:"+ ByteMessages_per_MeetingID.size() );
             }
             server.broadcast(message);
         }
@@ -120,9 +140,9 @@ public class WebSocketServerConfig {
             String jsons = new String(Objects.requireNonNull(message).array(), message.position(), message.remaining());
             Gson gson = new Gson();
             Message sender_obj = gson.fromJson(jsons, Message.class);
-            Event_Message_groups.get(sender_obj.getMeetingId()).add(message);
+            ByteMessages_per_MeetingID.get(sender_obj.getMeetingId()).add(message);
             System.out.println(jsons);
-            System.out.println(Event_Message_groups);
+            System.out.println(ByteMessages_per_MeetingID);
             server.broadcast(message);
         }
 

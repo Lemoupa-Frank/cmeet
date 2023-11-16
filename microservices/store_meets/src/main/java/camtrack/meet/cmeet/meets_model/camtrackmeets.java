@@ -1,9 +1,8 @@
 package camtrack.meet.cmeet.meets_model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
@@ -44,6 +43,14 @@ public class camtrackmeets implements Serializable {
 
     @Transient
     private String userid;
+
+    @Column(name = "meeting_update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date meeting_update_time;
+
+    @Column(name = "update_comment")
+    private String update_comment;
+
 
     public camtrackmeets() {
     }
@@ -138,6 +145,21 @@ public class camtrackmeets implements Serializable {
 
     public void setAttendee(String[] attendee) {
         this.attendee = attendee;
+    }
+    public Date getMeetingupdateTime() {
+        return meeting_update_time;
+    }
+
+    public void setMeetingupdateTime(Date meetingupdateTime) {
+        this.meeting_update_time = meetingupdateTime;
+    }
+
+    public String getUpdateComment() {
+        return update_comment;
+    }
+
+    public void setUpdateComment(String updateComment) {
+        this.update_comment = updateComment;
     }
 
     @Override

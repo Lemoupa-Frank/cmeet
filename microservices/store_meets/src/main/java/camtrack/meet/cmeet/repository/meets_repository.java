@@ -43,6 +43,9 @@ public interface meets_repository extends CrudRepository<camtrackmeets, String>
     @Query("SELECT m from camtrackmeets m INNER JOIN UserMeetings um ON m.meetingId=um.userMeetingsPK.meetingId WHERE um.userMeetingsPK.userId = :userId")
     List<camtrackmeets> findUserMeets(String userId);
 
+    @Query("SELECT m from camtrackmeets m INNER JOIN UserMeetings um ON m.meetingId=um.userMeetingsPK.meetingId WHERE um.userMeetingsPK.userId = :userId AND m.startdate >= :startdate AND m.enddate <= :enddate")
+    List<camtrackmeets> get_user_meet_for_period(String userId, OffsetDateTime startdate, OffsetDateTime enddate);
+
     /*
    @Query(value = "SELECT m.*\n" +
            "FROM \"meeting\" m\n" +

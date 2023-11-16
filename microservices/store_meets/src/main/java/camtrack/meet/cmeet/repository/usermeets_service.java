@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class usermeets_service
@@ -29,7 +28,7 @@ public class usermeets_service
     }
     public Iterable<UserMeetings> FindUserByMeets(String MeetsId){return usermeetsRepsitory.findUserByMeeting(MeetsId);}
 
-    public List<UserMeetings> finduserbyMeets(String meetingId){return usermeetsRepsitory.findRolesAndSignables(meetingId);}
+    public List<UserMeetings> findusersbyMeets(String meetingId){return usermeetsRepsitory.findRolesAndSignables(meetingId);}
 
     public int update(UserMeetings userAttendee){ return usermeetsRepsitory.updateSignatureAndRoleBy(userAttendee.getSignature(),userAttendee.getUserMeetingsPK());}
 
